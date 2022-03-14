@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-post-dpl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-post-dpl
+  template:
+    metadata:
+      labels:
+        app: api-post-dpl
+    spec:
+      containers:
+        - name: api-post-dpl
+          image: sonnemon/api-post
+          env:
+            - name: API_PORT
+              value: "3000"
+            - name: MONGO_URI
+              value: "mongodb://mongo-srv:27017/test"
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: ticketing
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-post-srv
+spec:
+  selector:
+    app: api-post-dpl
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP

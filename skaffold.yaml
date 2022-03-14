@@ -1,0 +1,39 @@
+apiVersion: skaffold/v2beta11
+kind: Config
+build:
+  artifacts:
+    - image: sonnemon/api-category
+      context: category
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: sonnemon/api-post
+      context: post
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: sonnemon/graph
+      context: graphql
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+  local:
+    push: false
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/nats-dpl.yaml
+      - ./infra/k8s/mongo-dpl.yaml
+      - ./infra/k8s/post-dpl.yaml
+      - ./infra/k8s/graph-dpl.yaml
+      - ./infra/k8s/category-dpl.yaml
+      - ./infra/k8s/ingress.yaml

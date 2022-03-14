@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graph-dpl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graph-dpl
+  template:
+    metadata:
+      labels:
+        app: graph-dpl
+    spec:
+      containers:
+        - name: graph-dpl
+          image: sonnemon/graph
+          env:
+            - name: API_PORT
+              value: "3000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graph-srv
+spec:
+  selector:
+    app: graph-dpl
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
